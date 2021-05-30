@@ -1,67 +1,72 @@
-var selectedRow = null;
-function onFormSubmit(e){
-  Event.preventDefault();
-  var formData = readFormData();
-  if(selectedRow === null){
-    insertNewRecord(formData);
-  }else{
-    updateRecord(formData)
+document.getElementById('form').addEventListener('submit',(e)=>{
+  let title = document.getElementById("title").value;
+  let genre = document.getElementById("genre").value;
+  let description = document.getElementById("description").value;
+  let image = document.getElementById("image").value;
+  createMovie(title,genre,description,image);
+  e.preventDefault();
+});
+
+var movies= [];
+
+function createMovie(title,genre,description,image){
+  var movie={
+      title:title,
+      genre:genre,
+      description:description,
+      image:image
   }
-  resetForm();
+  movies.push(movie);
+  readMovie();
+  console.log(movies);
+  document.getElementById('form').reset();
 }
 
-//Read operation using this function
-function readFormData(){
-  var formData = {};
-  formData["title"] = document.getElementById("title").value;
-  formData["genre"] = document.getElementById("genre").value;
-  formData["description"] = document.getElementById("description").value;
-  formData["image"] = document.getElementById("image").value;
-  return formData;
+function readMovie(){
+  var moviehtml = document.getElementById('movies');
+  moviehtml.innerHTML= '';
+  for(var i=0; i<movies.length;i++){
+      moviehtml.innerHTML+= `<div class="black"><p>TITLE: ${movies[i].title}</p><p>GENRE: ${movies[i].genre}</p><p>Description: ${movies[i].description}</p><p>IMAGE: ${movies[i].image}</p><button class="edit" onClick="editMovie('${i}')">Edit</button><button class="remove" onClick="deleteMovie('${i}')">Delete</button> `
+  }
 }
 
-//Create operation
-function insertNewRecord(data){
-  var table = document.getElementById("movies").getElementsByTagName('tbody')[0];
-  var newRow = table.insertRow(table.length);
-  var cell1 = newRow.insertCell(0);
-      cell1.innerHTML = data.title;
-  var cell2 = newRow.insertCell(1);
-      cell2.innerHTML = data.genre;
-  var cell3 = newRow.insertCell(2);
-      cell3.innerHTML = data.description;
-  var cell4 = newRow.insertCell(3);
-      cell4.innerHTML = data.image;
-  var cell5 = newRow.insertCell(4);
-      cell5.innerHTML = `<a href="#" onClick='onEdit(this)'>Edit</a>
-                      <a href="#" onClick='onDelete(this)'>Delete</a>`;
+function deleteMovie(i){
+  movies.splice(i,1);
+  readMovie();
+  console.log(movies);
 }
-// To Reset the data of fill input
-function resetForm(){
-  document.getElementById('title').value = '';
-  document.getElementById('genre').value = '';
-  document.getElementById('description').value = '';
-  document.getElementById('image').value = '';
-  selectedRow = null;
+
+function editMovie(index){
+  var moviehtml = document.getElementById('movies');
+  moviehtml.innerHTML= '';
+  for(var i=0; i<movies.length;i++){
+      if(i==index){
+          moviehtml.innerHTML+= `<div class="red">
+          TITLE: <input id="input2title"  placeholder="${movies[i].title}"><br><br>
+          GENRE: <input id="input2genre"  placeholder="${movies[i].genre}"><br><br>
+          DESCRIPTION: <input id="input2description"  placeholder="${movies[i].description}"><br><br>
+          IMAGE: <input id="input2image"  placeholder="${movies[i].image}"><br><br>
+          <button class="edit" onClick="updateMovie('${i}')">Update</button><button  class="remove" onClick="readMovie()">Cancel</button>
+          `
+      }else{
+          moviehtml.innerHTML+= `<div class="black"><p>TITLE: ${movies[i].title}</p><p>GENRE: ${movies[i].genre}</p><p>DESCRIPTION: ${movies[i].description}</p><p>IMAGE: ${movies[i].image}</p><button disabled class="edit" onClick="editMovie('${i}')">Edit</button><button disabled class="remove" onClick="deleteMovie('${i}')">Delete</button> `
+      }
+  }
 }
-// For Edit operation
-function onEdit(td){
-  selectedRow = td.parentElement.parentElement;
-  document.getElementById('title').value = selectedRow.cells[0].innerHTML;
-  document.getElementById('genre').value = selectedRow.cells[1].innerHTML;
-  document.getElementById('description').value = selectedRow.cells[2].innerHTML;
-  document.getElementById('image').value = selectedRow.cells[3].innerHTML;
-}
-function updateRecord(formData){
-  selectedRow.cells[0].innerHTML = formData.title;
-  selectedRow.cells[1].innerHTML = formData.genre;
-  selectedRow.cells[2].innerHTML = formData.description;
-  selectedRow.cells[3].innerHTML = formData.image;
-}
-function onDelete(td){
-  if(confirm('Are you sure you want to delete this record?')){
-      row = td.parentElement.parentElement;
-      document.getElementById('movies').deleteRow(row.rowIndex);
-      resetForm();
-  }    
+
+function updateMovie(index){
+  var updateTitle= document.getElementById('input2title').value;
+  var updateGenre= document.getElementById('input2genre').value;
+  var updateDescription= document.getElementById('input2description').value;
+  var updateImage= document.getElementById('input2image').value;
+
+  if (updateTitle == '' || updateGenre=='' || updateDescription=='' || updateImage=='') {
+      alert("INCOMPLETE");
+  } else {
+      movies[index].title= updateTitle;
+      movies[index].genre= updateGenre;
+      movies[index].description= updateDescription;
+      movies[index].image= updateImage;
+      readMovie();
+  }
 }
