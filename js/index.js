@@ -1,10 +1,12 @@
-document.getElementById('form').addEventListener('submit',(e)=>{
+document.getElementById('form').addEventListener('submit', (e)=>{
+  e.preventDefault();
+
   let title = document.getElementById("title").value;
   let genre = document.getElementById("genre").value;
   let description = document.getElementById("description").value;
   let year = document.getElementById("year").value;
+  
   createMovie(title,genre,description,year);
-  e.preventDefault();
 });
 
 var movies= [];
@@ -17,7 +19,7 @@ function createMovie(title,genre,description,year){
       year:year
   }
   movies.push(movie);
-  readMovie();
+  readMovie(movie);
   console.log(movies);
   document.getElementById('form').reset();
 }
@@ -30,8 +32,10 @@ function readMovie(movie){
   row.innerHTML = `
     <td>${movie.title}</td>
     <td>${movie.genre}</td>
-    <td>${movie.description}}</td>
-    <td>${movie.year}}</td>
+    <td>${movie.description}</td>
+    <td>${movie.year}</td>
+    <button class="edit" onClick="editMovie('${movie}')">Edit</button>
+    <button class="remove" onClick="deleteMovie('${movie}')">Delete</button>
   `;
 
   list.appendChild(row);
@@ -39,7 +43,7 @@ function readMovie(movie){
 
 function deleteMovie(i){
   movies.splice(i,1);
-  readMovie();
+  readMovie(movie);
   console.log(movies);
 }
 
@@ -53,10 +57,16 @@ function editMovie(index){
           GENRE: <input id="input2genre"  placeholder="${movies[i].genre}"><br><br>
           DESCRIPTION: <input id="input2description"  placeholder="${movies[i].description}"><br><br>
           YEAR: <input id="input2year"  placeholder="${movies[i].year}"><br><br>
-          <button class="edit" onClick="updateMovie('${i}')">Update</button><button  class="remove" onClick="readMovie()">Cancel</button>
+          <button class="edit" onClick="updateMovie('${i}')">Update</button>
+          <button  class="remove" onClick="readMovie(movie)">Cancel</button>
           `
       }else{
-          moviehtml.innerHTML+= `<div class="black"><p>TITLE: ${movies[i].title}</p><p>GENRE: ${movies[i].genre}</p><p>DESCRIPTION: ${movies[i].description}</p><p>YEAR: ${movies[i].image}</p><button disabled class="edit" onClick="editMovie('${i}')">Edit</button><button disabled class="remove" onClick="deleteMovie('${i}')">Delete</button> `
+          moviehtml.innerHTML+= `<div class="black"><p>TITLE: ${movies[i].title}</p>
+          <p>GENRE: ${movies[i].genre}</p>
+          <p>DESCRIPTION: ${movies[i].description}</p>
+          <p>YEAR: ${movies[i].image}</p>
+          <button disabled class="edit" onClick="editMovie('${i}')">Edit</button>
+          <button disabled class="remove" onClick="deleteMovie('${i}')">Delete</button> `
       }
   }
 }
@@ -74,6 +84,6 @@ function updateMovie(index){
       movies[index].genre= updateGenre;
       movies[index].description= updateDescription;
       movies[index].year= updateYear;
-      readMovie();
+      readMovie(movie);
   }
 }
