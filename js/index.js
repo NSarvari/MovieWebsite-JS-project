@@ -1,12 +1,14 @@
-var selectedRow = null
+var selectedRow = null;
 
 function onFormSubmit() {
     if (validate()) {
         var formData = readFormData();
-        if (selectedRow == null)
-            insertNewRecord(formData);
-        else
-            updateRecord(formData);
+        if (selectedRow == null) {
+            document.getElementById("submit").addEventListener("click", insertNewRecord(formData));
+        }
+        else {
+            document.getElementById("reset").addEventListener("click", updateRecord(formData));
+        }
         resetForm();
     }
 }
@@ -17,6 +19,7 @@ function readFormData() {
     formData["genre"] = document.getElementById("genre").value;
     formData["description"] = document.getElementById("description").value;
     formData["year"] = document.getElementById("year").value;
+    htmlElementToArray(formData["title"]);
     return formData;
 }
 
@@ -58,6 +61,7 @@ function updateRecord(formData) {
     selectedRow.cells[3].innerHTML = formData.year;
 }
 
+
 function onDelete(td) {
     if (confirm('Are you sure to delete this record ?')) {
         row = td.parentElement.parentElement;
@@ -65,15 +69,31 @@ function onDelete(td) {
         resetForm();
     }
 }
+
+function designFunction() {
+    document.getElementById("movieList").style.color = "#458bca";
+    document.getElementById("movieList").style.fontWeight = "900";
+    document.getElementById("movieList").style.fontSize = "14px";
+}
+
+function htmlElementToArray(element) {
+    const arrayHtml = Array.from(element);
+    arrayHtml.forEach(designFunction);
+    return arrayHtml;
+}
+
+
 function validate() {
     isValid = true;
     if (document.getElementById("title").value == "") {
         isValid = false;
         document.getElementById("titleValidationError").classList.remove("hide");
-    } else {
+    }
+    else {
         isValid = true;
-        if (!document.getElementById("titleValidationError").classList.contains("hide"))
+        if (!document.getElementById("titleValidationError").classList.contains("hide")) {
             document.getElementById("titleValidationError").classList.add("hide");
+        }
     }
     return isValid;
 }
